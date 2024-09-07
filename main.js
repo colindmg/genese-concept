@@ -30,59 +30,19 @@ dracoLoader.setDecoderPath("/draco/");
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
 
-gltfLoader.load(
-  // "/models/Duck/glTF-Binary/Duck.glb",
-  // "/models/FlightHelmet/glTF/FlightHelmet.gltf",
-  // "/models/Duck/glTF-Draco/Duck.gltf",
-  "/models/Fox/glTF/Fox.gltf",
-  (gltf) => {
-    mixer = new THREE.AnimationMixer(gltf.scene);
-    const action = mixer.clipAction(gltf.animations[2]);
-    action.play();
+gltfLoader.load("/models/human.glb", (gltf) => {
+  console.log(gltf.scene.children[0]);
 
-    gltf.scene.scale.set(0.025, 0.025, 0.025);
-    scene.add(gltf.scene);
-
-    // const children = [...gltf.scene.children];
-    // for (const child of children) {
-    //   child.castShadow = true;
-    //   child.receiveShadow = true;
-    //   scene.add(child);
-    // }
-  }
-);
-
-/**
- * Floor
- */
-const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(10, 10),
-  new THREE.MeshStandardMaterial({
-    color: "#444444",
-    metalness: 0,
-    roughness: 0.5,
-  })
-);
-floor.receiveShadow = true;
-floor.rotation.x = -Math.PI * 0.5;
-scene.add(floor);
+  // Model
+  const model = gltf.scene.children[0];
+  scene.add(model);
+});
 
 /**
  * Lights
  */
 const ambientLight = new THREE.AmbientLight(0xffffff, 2.4);
 scene.add(ambientLight);
-
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.8);
-directionalLight.castShadow = true;
-directionalLight.shadow.mapSize.set(1024, 1024);
-directionalLight.shadow.camera.far = 15;
-directionalLight.shadow.camera.left = -7;
-directionalLight.shadow.camera.top = 7;
-directionalLight.shadow.camera.right = 7;
-directionalLight.shadow.camera.bottom = -7;
-directionalLight.position.set(5, 5, 5);
-scene.add(directionalLight);
 
 /**
  * Sizes
@@ -116,12 +76,11 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(2, 2, 2);
+camera.position.set(0, 0, 5);
 scene.add(camera);
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
-controls.target.set(0, 0.75, 0);
 controls.enableDamping = true;
 
 /**
@@ -143,13 +102,6 @@ let previousTime = 0;
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
-  const deltaTime = elapsedTime - previousTime;
-  previousTime = elapsedTime;
-
-  // Update mixer
-  if (mixer) {
-    mixer.update(deltaTime);
-  }
 
   // Update controls
   controls.update();
