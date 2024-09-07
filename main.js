@@ -1,7 +1,6 @@
 import GUI from "lil-gui";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 /**
@@ -17,26 +16,37 @@ const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
 
 /**
- * Animation
- */
-let mixer = null;
-
-/**
  * Models
  */
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath("/draco/");
-
 const gltfLoader = new GLTFLoader();
-gltfLoader.setDRACOLoader(dracoLoader);
-
 gltfLoader.load("/models/human.glb", (gltf) => {
-  console.log(gltf.scene.children[0]);
-
-  // Model
   const model = gltf.scene.children[0];
+
+  const material = new THREE.MeshStandardMaterial({
+    color: 0xfaf4fe,
+    side: THREE.DoubleSide,
+  });
+
+  // Traverse through the model to find all mesh materials
+  model.traverse((child) => {
+    if (child.isMesh) {
+      // Remove textures by setting the material to a blue color
+      child.material = material;
+    }
+  });
+
+  // Repositionnement du modèle
+  model.position.y = -1;
+  model.position.z = 0.05;
+  model.rotateY(Math.PI);
+
+  // Add the model to the scene
   scene.add(model);
 });
+
+// AXES HELPER TEMP
+// const axesHelper = new THREE.AxesHelper(5);
+// scene.add(axesHelper);
 
 /**
  * Lights
@@ -76,7 +86,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(0, 0, 5);
+camera.position.set(0, 0, 3);
 scene.add(camera);
 
 // Controls
