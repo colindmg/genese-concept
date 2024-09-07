@@ -133,6 +133,49 @@ gltfLoader.load("/models/human.glb", (gltf) => {
 // scene.add(axesHelper);
 
 /**
+ * Particles
+ */
+const particleTexture = textureLoader.load("/textures/star.png");
+
+// Geometry
+const particlesGeometry = new THREE.BufferGeometry();
+const count = 150;
+
+const positions = new Float32Array(count * 3);
+const colors = new Float32Array(count * 3);
+
+for (let i = 0; i < count * 3; i++) {
+  positions[i] = (Math.random() - 0.5) * 15;
+
+  // Faire en sorte que les couleurs soit toujours entre 0.9 et 1
+  colors[i] = Math.random() * 0.1 + 0.9;
+}
+
+particlesGeometry.setAttribute(
+  "position",
+  new THREE.BufferAttribute(positions, 3)
+);
+
+particlesGeometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+// Material
+const particlesMaterial = new THREE.PointsMaterial({
+  size: 0.05,
+  sizeAttenuation: true,
+  alphaMap: particleTexture,
+  transparent: true,
+  // alphaTest: 0.001,
+  // depthTest: false,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+  vertexColors: true,
+});
+
+// Points
+const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particles);
+
+/**
  * Lights
  */
 const ambientLight = new THREE.AmbientLight(0xffffff, 2.4);
@@ -246,9 +289,33 @@ const envMap = textureLoader.load("/environment/env.jpg", (texture) => {
 /**
  * Animate
  */
+// Variables to store mouse position and camera target position
+let mouseX = 0;
+let mouseY = 0;
+let targetX = 0;
+let targetY = 0;
+
+let mouseMoveActived = false;
+
+// Add event listener for mouse movement
+window.addEventListener("mousemove", (event) => {
+  // Calculate mouse position in normalized device coordinates (-1 to +1)
+  mouseX = (event.clientX / sizes.width) * 2 - 1;
+  mouseY = -(event.clientY / sizes.height) * 2 + 1;
+
+  // Amplify the movement effect
+  targetX = mouseX * 0.1;
+  targetY = mouseY * 0.1;
+});
+
 const clock = new THREE.Clock();
 const tick = () => {
   const elapsedTime = clock.getElapsedTime();
+
+  if (mouseMoveActived) {
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetX, 0.025);
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, 0.025);
+  }
 
   // Update model
   if (model) {
@@ -287,6 +354,7 @@ const animateButton = document.getElementById("animateCamera");
 
 // Animation de la caméra vers la position (-2.5, 0, 0) lors du clic
 animateButton.addEventListener("click", () => {
+  // ÉLÉMENTS DE LA PREMIÈRE VUE
   gsap.to(camera.position, {
     x: -2.5,
     y: 0,
@@ -296,6 +364,15 @@ animateButton.addEventListener("click", () => {
     onUpdate: () => {
       camera.lookAt(new THREE.Vector3(0, 0, 0));
     },
+    onComplete: () => {
+      mouseMoveActived = true;
+    },
+  });
+
+  gsap.to(model.position, {
+    z: 0,
+    duration: 2,
+    ease: "power2.inOut",
   });
 
   gsap.to("#blackLogo", {
@@ -315,5 +392,39 @@ animateButton.addEventListener("click", () => {
     onComplete: () => {
       document.getElementById("animateCamera").style.display = "none";
     },
+  });
+
+  // ÉLÉMENTS DE LA DEUXIÈME VUE
+  gsap.to("#whiteLogo", {
+    opacity: 1,
+    filter: "blur(0px)",
+    duration: 1,
+    delay: 1.5,
+    ease: "power2.inOut",
+  });
+
+  gsap.to("#planet", {
+    opacity: 1,
+    duration: 1.5,
+    delay: 1.75,
+    ease: "power2.inOut",
+  });
+
+  gsap.to("#links a", {
+    opacity: 1,
+    filter: "blur(0px)",
+    duration: 0.5,
+    delay: 1.75,
+    ease: "power2.inOut",
+    stagger: 0.1,
+  });
+
+  gsap.to("#infos p", {
+    opacity: 1,
+    filter: "blur(0px)",
+    duration: 0.5,
+    delay: 2.25,
+    ease: "power2.inOut",
+    stagger: 0.1,
   });
 });

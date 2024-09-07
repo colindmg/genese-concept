@@ -138,7 +138,8 @@ const HoloEffect = {
 			float d = lumFront - lumBack;
 			vec3 finalColor = background + d;
 
-			gl_FragColor = color;
+			// gl_FragColor = color;
+			// gl_FragColor = vec4(vec3(abs(1.0 - finalColor)), 1.0);
 			gl_FragColor = vec4(vec3(finalColor), 1.0);
 
 		}`,
