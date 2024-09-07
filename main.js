@@ -1,7 +1,9 @@
+import gsap from "gsap";
 import GUI from "lil-gui";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { AfterimagePass } from "three/examples/jsm/postprocessing/AfterimagePass.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
@@ -166,10 +168,11 @@ window.addEventListener("resize", () => {
 const camera = new THREE.PerspectiveCamera(
   75,
   sizes.width / sizes.height,
-  0.1,
-  100
+  0.01,
+  10
 );
-camera.position.set(-1.5, 0, 0);
+// camera.position.set(-2, 0, 0);
+camera.position.set(0.01, 0.89, 0.05);
 scene.add(camera);
 
 // Controls
@@ -215,10 +218,18 @@ gui.add(bloomPass, "radius", 0, 1, 0.001).name("BloomRadius");
 
 const holoEffect = new ShaderPass(HoloEffect);
 
+const afterimagePass = new AfterimagePass();
+// afterimagePass.uniforms["damp"].value = 0.5;
+gui
+  .add(afterimagePass.uniforms["damp"], "value", 0, 1)
+  .step(0.001)
+  .name("AfterimageDamp");
+
 const effectComposer = new EffectComposer(renderer);
 effectComposer.addPass(renderPass);
 effectComposer.addPass(bloomPass);
 effectComposer.addPass(holoEffect);
+effectComposer.addPass(afterimagePass);
 
 /**
  * Environment
@@ -266,3 +277,28 @@ const tick = () => {
 };
 
 tick();
+
+// -------------------------------
+
+gui.hide();
+
+// Sélection du bouton
+const animateButton = document.getElementById("animateCamera");
+
+// Animation de la caméra vers la position (-2.5, 0, 0) lors du clic
+animateButton.addEventListener("click", () => {
+  const tl = gsap.timeline();
+
+  // tl.to(camera.position, {
+  //   y: 0.9,
+  //   duration: 0.1,
+  //   ease: "power1.in",
+  // });
+  tl.to(camera.position, {
+    x: -2.5,
+    y: 0,
+    z: 0,
+    duration: 2,
+    ease: "power2.inOut",
+  });
+});
