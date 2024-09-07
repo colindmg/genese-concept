@@ -4,7 +4,9 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { HoloEffect } from "./HoloEffect";
 
 /**
  * Base
@@ -17,6 +19,7 @@ const canvas = document.querySelector("canvas.webgl");
 
 // Scene
 const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050505);
 
 // Loaders
 const gltfLoader = new GLTFLoader();
@@ -187,6 +190,8 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.8;
 
+renderer.setClearColor(0x050505);
+
 gui.add(renderer, "toneMappingExposure", 0, 3, 0.001).name("Exposure");
 
 /**
@@ -208,6 +213,13 @@ gui.add(bloomPass, "threshold", 0, 1, 0.001).name("BloomThreshold");
 gui.add(bloomPass, "strength", 0, 3, 0.001).name("BloomStrength");
 gui.add(bloomPass, "radius", 0, 1, 0.001).name("BloomRadius");
 
+const holoEffect = new ShaderPass(HoloEffect);
+
+const effectComposer = new EffectComposer(renderer);
+effectComposer.addPass(renderPass);
+effectComposer.addPass(bloomPass);
+effectComposer.addPass(holoEffect);
+
 /**
  * Environment
  */
@@ -219,10 +231,6 @@ const envMap = textureLoader.load("/environment/env.jpg", (texture) => {
   scene.environment = envMap;
   pmremGenerator.dispose();
 });
-
-const effectComposer = new EffectComposer(renderer);
-effectComposer.addPass(renderPass);
-effectComposer.addPass(bloomPass);
 
 /**
  * Animate
@@ -240,15 +248,17 @@ const tick = () => {
         child.material.userData.shader.uniforms.uTime.value = elapsedTime;
       }
     });
+
+    holoEffect.uniforms.uTime.value = elapsedTime;
   }
 
   // Update controls
   controls.update();
 
   // Render
-  renderer.render(scene, camera);
+  // renderer.render(scene, camera);
 
-  // Postprocessing
+  // Render with postprocessing
   effectComposer.render();
 
   // Call tick again on the next frame
