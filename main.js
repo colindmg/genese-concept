@@ -287,14 +287,7 @@ const animateButton = document.getElementById("animateCamera");
 
 // Animation de la caméra vers la position (-2.5, 0, 0) lors du clic
 animateButton.addEventListener("click", () => {
-  const tl = gsap.timeline();
-
-  // tl.to(camera.position, {
-  //   y: 0.9,
-  //   duration: 0.1,
-  //   ease: "power1.in",
-  // });
-  tl.to(camera.position, {
+  gsap.to(camera.position, {
     x: -2.5,
     y: 0,
     z: 0,
@@ -302,6 +295,25 @@ animateButton.addEventListener("click", () => {
     ease: "power2.inOut",
     onUpdate: () => {
       camera.lookAt(new THREE.Vector3(0, 0, 0));
+    },
+  });
+
+  gsap.to("#blackLogo", {
+    opacity: 0,
+    duration: 1,
+    delay: 0.3,
+    ease: "power2.inOut",
+    onComplete: () => {
+      document.getElementById("blackLogo").style.display = "none";
+    },
+  });
+
+  gsap.to("#animateCamera", {
+    opacity: 0,
+    duration: 0.5,
+    ease: "power2.inOut",
+    onComplete: () => {
+      document.getElementById("animateCamera").style.display = "none";
     },
   });
 });
