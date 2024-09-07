@@ -10,7 +10,20 @@
   <body>
     <canvas class="webgl"></canvas>
 
-    <button id="animateCamera" class="fixed bg-red-500">Animate Camera</button>
+    <div class="absolute h-full w-full top-0 left-0">
+      <!-- PREMIÈRE VUE -->
+      <img
+        src="/img/logo-black.png"
+        alt="Logo de Génèse"
+        class="w-[300px] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      />
+      <button
+        id="animateCamera"
+        class="fixed bottom-[15%] left-1/2 -translate-x-1/2 text-xl font-serif animate-pulse"
+      >
+        DISCOVER
+      </button>
+    </div>
 
     <script type="module" src="./main.js"></script>
   </body>

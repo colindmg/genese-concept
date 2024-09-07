@@ -1,7 +1,6 @@
 import gsap from "gsap";
 import GUI from "lil-gui";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { AfterimagePass } from "three/examples/jsm/postprocessing/AfterimagePass.js";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
@@ -173,11 +172,12 @@ const camera = new THREE.PerspectiveCamera(
 );
 // camera.position.set(-2, 0, 0);
 camera.position.set(0.01, 0.89, 0.05);
+camera.lookAt(new THREE.Vector3(0, 0, 0));
 scene.add(camera);
 
 // Controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
+// const controls = new OrbitControls(camera, canvas);
+// controls.enableDamping = true;
 
 /**
  * Renderer
@@ -264,7 +264,7 @@ const tick = () => {
   }
 
   // Update controls
-  controls.update();
+  // controls.update();
 
   // Render
   // renderer.render(scene, camera);
@@ -300,5 +300,8 @@ animateButton.addEventListener("click", () => {
     z: 0,
     duration: 2,
     ease: "power2.inOut",
+    onUpdate: () => {
+      camera.lookAt(new THREE.Vector3(0, 0, 0));
+    },
   });
 });
