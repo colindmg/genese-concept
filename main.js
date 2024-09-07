@@ -399,7 +399,7 @@ animateButton.addEventListener("click", () => {
     opacity: 1,
     filter: "blur(0px)",
     duration: 1,
-    delay: 1.5,
+    delay: 1.25,
     ease: "power2.inOut",
   });
 
@@ -414,7 +414,7 @@ animateButton.addEventListener("click", () => {
     opacity: 1,
     filter: "blur(0px)",
     duration: 0.5,
-    delay: 1.75,
+    delay: 1.5,
     ease: "power2.inOut",
     stagger: 0.1,
   });
@@ -423,7 +423,7 @@ animateButton.addEventListener("click", () => {
     opacity: 1,
     filter: "blur(0px)",
     duration: 0.5,
-    delay: 2.25,
+    delay: 1.5,
     ease: "power2.inOut",
     stagger: 0.1,
   });
