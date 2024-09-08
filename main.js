@@ -468,14 +468,40 @@ gsap.to("#overlay", {
 });
 
 // APPARITION DE LA PAGE PRODUITS AU SCROLL
+
+const animateProductsPage = () => {
+  gsap.to("#overlay-products h2", {
+    opacity: 1,
+    filter: "blur(0px)",
+    y: 0,
+    duration: 0.8,
+    ease: "power2.inOut",
+  });
+
+  gsap.to("#overlay-products .product", {
+    opacity: 1,
+    duration: 1,
+    delay: 0.5,
+    ease: "power2.inOut",
+    stagger: 0.1,
+  });
+};
+
+let appearAnimate = false;
 gsap.to("#overlay-products", {
   opacity: 1,
   ease: "power1.out",
-  delay: 0.3,
   scrollTrigger: {
     trigger: canvas,
     start: "top top",
     end: "bottom top",
     scrub: 1,
+    onUpdate: (self) => {
+      // Vérifie le progrès du scroll
+      if (self.progress > 0.8 && !appearAnimate) {
+        appearAnimate = true;
+        animateProductsPage();
+      }
+    },
   },
 });
