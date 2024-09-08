@@ -480,7 +480,7 @@ const animateProductsPage = () => {
 
   gsap.to("#overlay-products .product", {
     opacity: 1,
-    duration: 1,
+    duration: 0.8,
     delay: 0.5,
     ease: "power2.inOut",
     stagger: 0.1,
@@ -497,7 +497,6 @@ gsap.to("#overlay-products", {
     end: "bottom top",
     scrub: 1,
     onUpdate: (self) => {
-      // Vérifie le progrès du scroll
       if (self.progress > 0.8 && !appearAnimate) {
         appearAnimate = true;
         animateProductsPage();
