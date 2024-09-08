@@ -7,9 +7,18 @@ html {
   background: #1e1a20;
 }
 
+body {
+  overflow-y: hidden;
+}
+
 .webgl {
   position: fixed;
   top: 0;
   left: 0;
   outline: none;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+  width: 0px;
 }

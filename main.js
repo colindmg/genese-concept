@@ -1,4 +1,5 @@
 import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
 import GUI from "lil-gui";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -8,6 +9,12 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { HoloEffect } from "./HoloEffect";
+gsap.registerPlugin(ScrollTrigger);
+
+// SCROLL TO TOP ON REFRESH
+window.onbeforeunload = function () {
+  window.scrollTo(0, 0);
+};
 
 /**
  * Base
@@ -126,6 +133,18 @@ gltfLoader.load("/models/human.glb", (gltf) => {
 
   // Add the model to the scene
   scene.add(model);
+
+  // ANIMATION DU MODEL AU SCROLL - exécute l'animation ici
+  gsap.to(model.position, {
+    y: 2,
+    ease: "none",
+    scrollTrigger: {
+      trigger: canvas,
+      start: "top top",
+      end: "bottom top",
+      scrub: 1,
+    },
+  });
 });
 
 // AXES HELPER TEMP
@@ -174,6 +193,17 @@ const particlesMaterial = new THREE.PointsMaterial({
 // Points
 const particles = new THREE.Points(particlesGeometry, particlesMaterial);
 scene.add(particles);
+
+gsap.to(particles.position, {
+  y: -1,
+  ease: "power1.inOut",
+  scrollTrigger: {
+    trigger: canvas,
+    start: "top top",
+    end: "bottom top",
+    scrub: 1,
+  },
+});
 
 /**
  * Lights
@@ -366,6 +396,7 @@ animateButton.addEventListener("click", () => {
     },
     onComplete: () => {
       mouseMoveActived = true;
+      document.body.style.overflowY = "auto";
     },
   });
 
@@ -427,4 +458,25 @@ animateButton.addEventListener("click", () => {
     ease: "power2.inOut",
     stagger: 0.1,
   });
+});
+
+gsap.to("#overlay", {
+  opacity: 0,
+  duration: 1,
+  delay: 1,
+  ease: "power2.inOut",
+});
+
+// APPARITION DE LA PAGE PRODUITS AU SCROLL
+gsap.to("#overlay-products", {
+  opacity: 1,
+  ease: "power1.out",
+  delay: 0.3,
+  scrollTrigger: {
+    trigger: canvas,
+    start: "top top",
+    end: "bottom top",
+    scrub: 1,
+    markers: true,
+  },
 });
